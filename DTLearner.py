@@ -6,19 +6,39 @@ import numpy as np
 
 class DTLearner(object):
 
-    def __init__(self, verbose = False):
-        pass # move along, these aren't the drones you're looking for
+    def __init__(self, leaf_size = 1, verbose = False):
+        self.leaf_size = leaf_size
+        self.verbose = verbose
 
     def author(self):
         return 'plivesey3' # replace tb34 with your Georgia Tech username
 
     def buildTree(self, dataX, dataY):
-        ''' Recursive algorithm to build decision tree. 
-            (Based on alrgorithm by JR Quinlin) '''
+        ''' 
+        @summary: Recursive algorithm to build decision tree. 
+        (Based on alrgorithm by JR Quinlin)
+        @param dataX: X values of data to add
+        @param dataY: the Y training values 
+        '''
+
         # if data.shape[0]==1:return[leaf, data.y, NA, NA]
+        if dataX.shape[0] == 1:
+            return np.array([-1, dataY[-1], -1, -1])
         # if all data.y same: return[leaf, data.y, NA, NA]
+        # This is done with list comprehension.  Create a list of all the data
+        # that is the same as the first element.  If that list if the size of
+        # all of the original data, they are all the same, so return a leaf.
+        elif len([sameData for sameData in dataY[1:dataY.shape[0]] \
+            if sameData == dataY[0]]) == dataY.shape[0] - 1:
+            return np.array([-1, dataY[0], -1, -1])
         # else
+        else:
             # Determine best feature i to split on
+            correl = np.array[]
+            # Go through all of columns in dataX
+            for col in dataX.T:
+                # and find their correlation with dataY
+                correl.append(corrcoef(col, dataY))
             # SplitVal = data[:, i].median()
             # lefttree = buildTree(data[data[:, i] <= SplitVal])
             # righttree = buildTree(data[data[:, i] > SplitVal])
@@ -31,14 +51,11 @@ class DTLearner(object):
         @param dataX: X values of data to add
         @param dataY: the Y training values
         """
-        
-        # slap on 1s column so linear regression finds a constant term
-        newdataX = np.ones([dataX.shape[0],dataX.shape[1]+1])
-        newdataX[:,0:dataX.shape[1]]=dataX
-
         # build and save the model
-        self.model_coefs, residuals, rank, s = np.linalg.lstsq(newdataX, dataY)
-        
+        new_tree = self.buildTree(dataX, dataY)
+        if self.verbose:
+            print(new_tree)
+
     def query(self,points):
         """
         @summary: Estimate a set of test points given the model we built.
