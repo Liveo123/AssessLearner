@@ -3,6 +3,7 @@ A simple wrapper for Decision Trees.  (c) 2017 Paul Livesey
 """
 
 import numpy as np
+import myutils as mu
 
 class DTLearner(object):
 
@@ -20,7 +21,10 @@ class DTLearner(object):
         @param dataX: X values of data to add
         @param dataY: the Y training values 
         '''
-
+        if self.verbose:
+            mu.printVerbose("dataX", dataX)
+            mu.printVerbose("dataY", dataY)
+        
         # if data.shape[0]==1:return[leaf, data.y, NA, NA]
         if dataX.shape[0] == 1:
             return np.array([-1, dataY[-1], -1, -1])
@@ -30,20 +34,31 @@ class DTLearner(object):
         # all of the original data, they are all the same, so return a leaf.
         elif len([sameData for sameData in dataY[1:dataY.shape[0]] \
             if sameData == dataY[0]]) == dataY.shape[0] - 1:
+
             return np.array([-1, dataY[0], -1, -1])
         # else
         else:
-            # Determine best feature i to split on
-            correl = np.array[]
-            # Go through all of columns in dataX
-            for col in dataX.T:
-                # and find their correlation with dataY
-                correl.append(corrcoef(col, dataY))
-            # SplitVal = data[:, i].median()
-            # lefttree = buildTree(data[data[:, i] <= SplitVal])
-            # righttree = buildTree(data[data[:, i] > SplitVal])
-            # root = [i, SplitVal, 1, lefttree.shape[0] + 1]
-            # return(append(root, lefttree, righttree))
+            # Determine best feature max_corr to split on
+            # i.e. Go through all of columns in dataX and find the one which
+            # corrleates most with dataY (the results column)
+            coef_matrix = np.corrcoef(dataX, dataY, rowvar=False)
+            correl = [np.abs(coef_matrix[coef_matrix.shape[1] - 1, i]) for i in range(0, coef_matrix.shape[1] - 1)]
+
+            if self.verbose:
+                mu.printVerbose("Correl Values", correl)
+
+            max_pos = np.argmax(correl)
+            max_corr = correl[max_pos]  
+            
+            SplitVal = np.median(dataX[:, max_pos])
+            split_left = [dataX[: i] <= SplitVal]
+            split_right = [dataX[:, i] > SplitVal]
+            mu.printVerbose("dataX[split_left]", dataX[split_left])
+            mu.printVerbose("dataX[split_right]", dataX[split_right])
+            lefttree = self.buildTree(dataX[split_left], dataY[split_left])
+            righttree = self.buildTree(dataX[split_right], dataY[split_right])
+            root = [i, SplitVal, 1, lefttree.shape[0] + 1]
+            return(append(root, lefttree, righttree))
 
     def addEvidence(self,dataX,dataY):
         """

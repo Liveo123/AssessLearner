@@ -1,10 +1,21 @@
 import numpy as np
 import DTLearner as dt
+import myutils as mu
 
 learner = dt.DTLearner(leaf_size = 1, verbose = True)
 
-Xtrain = np.array([[0,1,2,4],[0,1,4,0],[0,1,6,0],[0,1,8,4]])
-Ytrain = np.array([0,0,0,0])
+Xtrain = np.array([[0,1,2,4],
+                   [0,2,4,0],
+                   [0,3,6,0],
+                   [0,4,6,0],
+                   [0,5,6,0],
+                   [0,6,8,4]])
+                            
+Ytrain = np.array([1,2,3,4,5,5])
+
+#if learner.verbose == True:
+#print(np.c_[Xtrain, Ytrain])    
+    #mu.printVerbose(np.c_[Xtrain, Ytrain])    
 
 learner.addEvidence(Xtrain, Ytrain)
 
