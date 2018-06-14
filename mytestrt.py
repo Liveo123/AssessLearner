@@ -1,8 +1,8 @@
 import numpy as np
-import DTLearner as dt
+import RTLearner as dt
 import myutils as mu
 
-learner = dt.DTLearner(leaf_size = 1, verbose = True)
+learner = dt.RTLearner(leaf_size = 1, verbose = True)
 
 Xtrain = np.array([[0.885,0.330,9.100],
                    [0.725,0.390,10.900],

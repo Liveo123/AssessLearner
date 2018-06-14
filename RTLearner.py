@@ -1,11 +1,11 @@
 """
-A simple wrapper for Decision Trees.  (c) 2017 Paul Livesey
+A simple wrapper for Random Decision Trees.  (c) 2017 Paul Livesey
 """
 
 import numpy as np
 import myutils as mu
 
-class DTLearner(object):
+class RTLearner(object):
 
     def __init__(self, leaf_size = 1, verbose = False):
         self.leaf_size = leaf_size
@@ -50,45 +50,32 @@ class DTLearner(object):
             return np.array([-1, dataY[0], -1, -1])
         # else
         else:
-            # Determine best feature max_corr to split on
-            # i.e. Go through all of columns in dataX and find the one which
-            # corrleates most with dataY (the results column)
-            coef_matrix = np.corrcoef(dataX, dataY, rowvar=False)
-            
-            if self.verbose:
-                mu.printVerbose("Coeff Matrix", coef_matrix)
-            
-            # Need to grab all of those items in the coefficient Matrix which
-            # make up the correlation values needed. Those are all the of the
-            # numbers which correlate each row in dataX with dataY.
-            correl = [np.abs(coef_matrix[coef_matrix.shape[1] - 1, i]) \
-                    for i in range(0, coef_matrix.shape[1] - 1)]
+            # Split the data on a random on a random feature
+            rnd_pos = np.random.randint(0, (dataX.shape[1]-1)) 
 
-            correl = np.nan_to_num(correl)
-            
-            if self.verbose:
-                mu.printVerbose("Correl Values", correl)
+            # Also split on a random number (instead of median as in basic DT)
+            rnd_split_val1 = np.random.randint(0, (dataX.shape[0]-1))
+            rnd_split_val2 = np.random.randint(0, (dataX.shape[0]-1))
 
-            # Find the place of the maximum correlation and its position in the 
-            # matrix.
-            max_pos = np.argmax(correl)
-            max_corr = correl[max_pos]  
-            
             # Split all of the data according to the median value of the 
             # correlation and add to its own table.  N.B.  The splits go
             # through the whole table, grabbing each column that is less 
             # and adding it to the left table and grabbing each that is 
             # bigger and adding it to the right table.
-            split_val = np.median(dataX[:, max_pos])
+            mu.printVerbose("rnd_pos", rnd_pos)
+            mu.printVerbose("rnd_split_val_1", rnd_split_val1)
+            mu.printVerbose("rnd_split_val_2", rnd_split_val2)
+
+            split_val = (dataX[rnd_split_val1, rnd_pos] + dataX[rnd_split_val2, rnd_pos]) / 2
             
-            split_left = [dataX[:, max_pos] <= split_val]
+            split_left = [dataX[:, rnd_pos] <= split_val]
             mu.printVerbose("dataX[split_left]", dataX[split_left])
 
-            split_right = [dataX[:, max_pos] > split_val]
+            split_right = [dataX[:, rnd_pos] > split_val]
             mu.printVerbose("dataX[split_right]", dataX[split_right])
            
             # ???
-            if np.sum(split_left) == dataX[:, max_pos].shape[0]:
+            if np.sum(split_left) == dataX[:, rnd_pos].shape[0]:
                 return np.array([-1, np.mean(dataY), -1, -1])
 
             # Use the split up tables to create their own subtree on both
@@ -104,11 +91,11 @@ class DTLearner(object):
                 num_on_left = left_tree.shape[0] + 1
 
             # Create the root node.  This is found by giving it:
-            # max_pos - This is best corr col - i.e. the one we use for split.
+            # rnd_pos - This is best corr col - i.e. the one we use for split.
             # split_val - The value in the corr col we split on (median)
             # The start of the left tree (always next in table)
             # The start of the right tree (half way down).
-            root = [max_pos, split_val, 1, num_on_left]
+            root = [rnd_pos, split_val, 1, num_on_left]
 
             # Return the root along with either side of the tree.
             # We concatencate these all together in the table, in
