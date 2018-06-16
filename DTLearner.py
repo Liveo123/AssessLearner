@@ -10,6 +10,7 @@ class DTLearner(object):
     def __init__(self, leaf_size = 1, verbose = False):
         self.leaf_size = leaf_size
         self.verbose = verbose
+        self.new_tree = []
 
     def author(self):
         return 'plivesey3' # replace tb34 with your Georgia Tech username
@@ -40,6 +41,7 @@ class DTLearner(object):
         # If there is only one row, it's a leaf, so send it back.
         if dataX.shape[0] == 1:
             return np.array([-1, dataY[-1], -1, -1])
+
         # if all data.y same: return[leaf, data.y, NA, NA]
         # This is done with list comprehension.  Create a list of all the data
         # that is the same as the first element.  If that list if the size of
@@ -48,6 +50,14 @@ class DTLearner(object):
             if sameData == dataY[0]]) == dataY.shape[0] - 1:
 
             return np.array([-1, dataY[0], -1, -1])
+        
+        # Otherwise, if it is less than the leaf size, return as leaf
+        elif dataX.shape[0] <= self.leaf_size:
+            if self.leaf_size != 1:
+                return np.array([-1, np.mean(dataY), -1, -1])
+            else:
+                return np.array([-1, dataY[0], -1, -1])
+
         # else
         else:
             # Determine best feature max_corr to split on
@@ -122,9 +132,31 @@ class DTLearner(object):
         @param dataY: the Y training values
         """
         # build and save the model
-        new_tree = self.buildTree(dataX, dataY)
+        self.new_tree = self.buildTree(dataX, dataY)
         if self.verbose:
-            print(new_tree)
+            print(self.new_tree)
+
+    def traverse(self, point, row=0):
+
+        # Get the column to split on
+        column = int(self.new_tree[row][0])
+        
+        # ... and the split value
+        tree_val = self.new_tree[row][1]
+        val_point = point[column]
+
+        # If we are at a leaf, return...
+        if column == -1:
+            return tree_val
+        # Otherwise, if it is to the left, recurse to the left...
+        elif val_point <= tree_val:
+            row += int(self.new_tree[row][2])
+            return self.traverse(point, row)
+        # else recurse to the right
+        else:
+            # Get the tree directions and go in that direction
+            row += int(self.new_tree[row][3])
+            return self.traverse(point, row)
 
     def query(self,points):
         """
@@ -134,8 +166,16 @@ class DTLearner(object):
         specific query.
         @returns the estimated values according to the saved model.
         """
-        return (self.model_coefs[:-1] * points).sum(axis = 1) \
-                + self.model_coefs[-1]
+        # TODO: Check that this is using relative not absolute rows.
+        res = []
+        # For each given point...
+        for point in points:
+            # Find the recommended value
+            res.append(self.traverse(point))
+
+        # convert to numpy array and send it back.
+        res = np.array(res)
+        return res.astype(float)
 
 if __name__=="__main__":
     print "the secret clue is 'zzyzx'"
