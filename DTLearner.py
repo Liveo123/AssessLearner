@@ -3,7 +3,7 @@ A simple wrapper for Decision Trees.  (c) 2017 Paul Livesey
 """
 
 import numpy as np
-import myutils as mu
+#import myutils as mu
 
 class DTLearner(object):
 
@@ -34,9 +34,9 @@ class DTLearner(object):
         Right:      Row in this table which starts the right tree
         '''
 
-        if self.verbose:
-            mu.printVerbose("dataX", dataX)
-            mu.printVerbose("dataY", dataY)
+        #if self.verbose:
+            #mu.printVerbose("dataX", dataX)
+            #mu.printVerbose("dataY", dataY)
         
         # If there is only one row, it's a leaf, so send it back.
         if dataX.shape[0] == 1:
@@ -65,8 +65,8 @@ class DTLearner(object):
             # corrleates most with dataY (the results column)
             coef_matrix = np.corrcoef(dataX, dataY, rowvar=False)
             
-            if self.verbose:
-                mu.printVerbose("Coeff Matrix", coef_matrix)
+            #if self.verbose:
+                #mu.printVerbose("Coeff Matrix", coef_matrix)
             
             # Need to grab all of those items in the coefficient Matrix which
             # make up the correlation values needed. Those are all the of the
@@ -76,8 +76,8 @@ class DTLearner(object):
 
             correl = np.nan_to_num(correl)
             
-            if self.verbose:
-                mu.printVerbose("Correl Values", correl)
+            #if self.verbose:
+                #mu.printVerbose("Correl Values", correl)
 
             # Find the place of the maximum correlation and its position in the 
             # matrix.
@@ -92,10 +92,10 @@ class DTLearner(object):
             split_val = np.median(dataX[:, max_pos])
             
             split_left = [dataX[:, max_pos] <= split_val]
-            mu.printVerbose("dataX[split_left]", dataX[split_left])
+            #mu.printVerbose("dataX[split_left]", dataX[split_left])
 
             split_right = [dataX[:, max_pos] > split_val]
-            mu.printVerbose("dataX[split_right]", dataX[split_right])
+            #mu.printVerbose("dataX[split_right]", dataX[split_right])
            
             # ???
             if np.sum(split_left) == dataX[:, max_pos].shape[0]:
@@ -104,9 +104,9 @@ class DTLearner(object):
             # Use the split up tables to create their own subtree on both
             # the left side and the right using recursion.
             left_tree = self.buildTree(dataX[split_left], dataY[split_left])
-            mu.printVerbose("Left Tree", left_tree)
+            #mu.printVerbose("Left Tree", left_tree)
             right_tree = self.buildTree(dataX[split_right], dataY[split_right])
-            mu.printVerbose("Right Tree", right_tree)
+            #mu.printVerbose("Right Tree", right_tree)
 
             if len(left_tree.shape) == 1:
                 num_on_left = 2
@@ -133,11 +133,10 @@ class DTLearner(object):
         """
         # build and save the model
         self.new_tree = self.buildTree(dataX, dataY)
-        if self.verbose:
-            print(self.new_tree)
+        #if self.verbose:
+            #print(self.new_tree)
 
     def traverse(self, point, row=0):
-
         # Get the column to split on
         column = int(self.new_tree[row][0])
         

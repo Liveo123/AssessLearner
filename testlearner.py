@@ -4,15 +4,25 @@ Test a learner.  (c) 2015 Tucker Balch
 
 import numpy as np
 import math
-import LinRegLearner as lrl
+import pandas as pd
+import DTLearner as lrl
 import sys
 
 if __name__=="__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) !=  2:
         print "Usage: python testlearner.py <filename>"
         sys.exit(1)
+
+    # First remove the date column from the csv
+    #if sys.argv[2] == 'd':
+        #f = pd.read_csv(sys.argv[1])
+        #keep_cols = ['ISE-TL', 'ISE-USD', 'SP', 'DAX', 'FTSE', 'NIKKEI', 'BOVESPA', 'EU', 'EM']
+        #new_f = f[keep_cols]
+        #new_f.to_csv(sys.argv[1], index=False)
+
+
     inf = open(sys.argv[1])
-    data = np.array([map(float,s.strip().split(',')) for s in inf.readlines()])
+    data = np.array([map(float,s.strip().split(',')) for s in inf.readlines()[1:]])
 
     # compute how much of the data is training and testing
     train_rows = int(0.6* data.shape[0])
@@ -28,7 +38,7 @@ if __name__=="__main__":
     print testY.shape
 
     # create a learner and train it
-    learner = lrl.LinRegLearner(verbose = True) # create a LinRegLearner
+    learner = lrl.DTLearner(verbose = True) # create a LinRegLearner
     learner.addEvidence(trainX, trainY) # train it
     print learner.author()
 
