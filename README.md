@@ -48,8 +48,7 @@ When compared with the out of sample result, the overfitting changes very little
 
 This shows that bagging make little difference to overfitting when the leaf size is small, but increasing the leaf size shows that it makes a siginicant difference, changing little as it increases.
 
-## Quantitatively compare "classic" decision trees (DTLearner) versus random trees (RTLearner). In which
-ways is one method better than the other?
+## Quantitatively compare "classic" decision trees (DTLearner) versus random trees (RTLearner). In which ways is one method better than the other?
 
 When the DTLearner is run against the RTLearner for RMSE on the Istanbul data, there seems to be very little difference, the RTLearner having a approximatley 0.002 more RMSE, which fades down to almost zero when the leaf size increase.
 
