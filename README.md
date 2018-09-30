@@ -59,4 +59,19 @@ So, the RTLearner did not get rid of overfitting when it is used in a situtation
 
 ![Plot 6](https://github.com/Liveo123/AssessLearner/blob/master/plot6.png)
 
+When the DT Learner and RTLearner are compared when used with bagging, it can be seen that the RTLearner once again has slighltly more error, approximately 0.001, fading off to almost nothing with increasing leaf size. This error is showing a slight improvement, but nothing seemingly important.
+
+When the correlations are compared between the DTLearner and RTLearner when used with bagging, a similar result is seen, although the RTLearner does show the interesting property of starting lower at around 0.8 and not varying very much at a leaf size of 100 being 0.75. The DTLearner is dropping over the same interval, from 0.9 to below 0.7.
+
+![Plot 7](https://github.com/Liveo123/AssessLearner/blob/master/plot7.png)
+
+When the same tests as above are run on a different data set, this time the redwine, similar results can be
+seen:
+
+![Plot 8](https://github.com/Liveo123/AssessLearner/blob/master/plot8.png)
+
+Here the DTLearner once again has a higher correlation at the start (0.6 compared with 0.4 of the
+RTLearner). This difference drops rapidly away as the leaf size increases, with neither showing a significant
+difference.
+
 
